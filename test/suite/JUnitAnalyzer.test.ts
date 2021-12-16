@@ -105,6 +105,7 @@ java.lang.RuntimeException
         at junit4.TestAnnotation.shouldFail(TestAnnotation.java:15)
         at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
         at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+        at org.eclipse.jdt.internal.junit5.runner.JUnit5TestReference.run(JUnit5TestReference.java:98)
 %TRACEE 
 %TESTE  1,shouldFail(junit4.TestAnnotation)
 %RUNTIME16`;
@@ -124,5 +125,6 @@ java.lang.RuntimeException
         sinon.assert.calledWith(erroredSpy, testItem, sinon.match.any);
         const testMessage = erroredSpy.getCall(0).args[1] as TestMessage;
         assert.strictEqual(testMessage.location?.range.start.line, 14);
+        assert.ok(!testMessage.message.toString().includes('org.eclipse.jdt.internal.junit'));
     });
 });

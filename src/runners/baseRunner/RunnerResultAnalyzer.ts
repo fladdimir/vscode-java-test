@@ -11,6 +11,12 @@ export abstract class RunnerResultAnalyzer {
 
     public abstract analyzeData(data: string): void;
     public abstract processData(data: string): void;
+    /**
+     * Determine if the given package name comes from the test runner, which should not
+     * be included in the test message stacktrace.
+     * @param packageName The package name.
+     */
+    protected abstract isTestRunnerPackage(packageName: string): boolean;
     protected testMessageLocation: Location | undefined;
 
     protected processStackTrace(data: string, traces: MarkdownString, assertionFailure: TestMessage | undefined, currentItem: TestItem | undefined, projectName: string): void {
@@ -18,6 +24,9 @@ export abstract class RunnerResultAnalyzer {
 
         const traceResults: RegExpExecArray | null = traceRegExp.exec(data);
         if (traceResults && traceResults.length === 6) {
+            if (this.isTestRunnerPackage(traceResults[3])) {
+                return;
+            }
             traces.appendText(traceResults[1]);
             traces.appendMarkdown(`${(traceResults[2] || '') + traceResults[3]}([${traceResults[4]}:${traceResults[5]}](command:_java.test.openStackTrace?${encodeURIComponent(JSON.stringify([data, projectName]))}))`);
             if (currentItem && path.basename(currentItem.uri?.fsPath || '') === traceResults[4]) {

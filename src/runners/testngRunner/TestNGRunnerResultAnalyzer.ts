@@ -77,6 +77,7 @@ export class TestNGRunnerResultAnalyzer extends RunnerResultAnalyzer {
             if (outputData.attributes.trace) {
                 const markdownTrace: MarkdownString = new MarkdownString();
                 markdownTrace.isTrusted = true;
+                markdownTrace.supportHtml = true;
 
                 for (const line of outputData.attributes.trace.split(/\r?\n/)) {
                     this.processStackTrace(line, markdownTrace, undefined, this.currentItem, this.projectName);
@@ -104,6 +105,14 @@ export class TestNGRunnerResultAnalyzer extends RunnerResultAnalyzer {
             const duration: number = Number.parseInt(outputData.attributes.duration, 10);
             setTestState(this.testContext.testRun, item, this.currentTestState, undefined, duration);
         }
+    }
+
+    protected isTestRunnerPackage(packageName: string): boolean {
+        if (packageName.includes('com.microsoft.java.test.runner')) {
+            return true;
+        }
+
+        return false;
     }
 
     protected getTestItem(testId: string): TestItem | undefined {

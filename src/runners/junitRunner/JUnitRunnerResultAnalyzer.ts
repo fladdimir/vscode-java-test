@@ -10,7 +10,6 @@ import { RunnerResultAnalyzer } from '../baseRunner/RunnerResultAnalyzer';
 import { findTestLocation, setTestState, TestResultState } from '../utils';
 
 export class JUnitRunnerResultAnalyzer extends RunnerResultAnalyzer {
-
     private testOutputMapping: Map<string, ITestInfo> = new Map();
     private triggeredTestsMapping: Map<string, TestItem> = new Map();
     private currentTestState: TestResultState;
@@ -150,6 +149,14 @@ export class JUnitRunnerResultAnalyzer extends RunnerResultAnalyzer {
 
             this.processStackTrace(data, this.traces, this.assertionFailure, this.currentItem, this.projectName);
         }
+    }
+
+    protected isTestRunnerPackage(packageName: string): boolean {
+        if (packageName.includes('org.eclipse.jdt.internal.junit')) {
+            return true;
+        }
+
+        return false;
     }
 
     protected getTestItem(message: string): TestItem | undefined {
